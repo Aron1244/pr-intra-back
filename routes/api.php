@@ -11,3 +11,12 @@ Route::middleware(['api', 'auth:sanctum'])->group(function (): void {
 
     Route::apiResource('users', UserController::class);
 });
+
+Route::middleware(['api', 'auth:sanctum'])->group(function (): void {
+    Route::apiResource('roles', \App\Http\Controllers\Api\RoleController::class);
+});
+
+Route::middleware(['api', 'auth:sanctum'])->group(function (): void {
+    Route::apiResource('documents', \App\Http\Controllers\Api\DocumentController::class);
+});
+
