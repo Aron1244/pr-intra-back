@@ -17,12 +17,10 @@ return new class extends Migration
 
             $table->string('name')->nullable();
 
-            $table->boolean('is_group')
-                ->default(false);
-
-            $table->foreignId('created_by')
-                ->constrained('users')
-                ->cascadeOnDelete();
+            $table->enum('type', [
+                'private',
+                'group'
+            ]);
 
             $table->timestamps();
 

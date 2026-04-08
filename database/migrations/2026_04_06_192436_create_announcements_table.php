@@ -19,6 +19,8 @@ return new class extends Migration
 
             $table->text('content');
 
+            $table->morphs('commentable');
+
             $table->foreignId('created_by')
                 ->constrained('users')
                 ->cascadeOnDelete();

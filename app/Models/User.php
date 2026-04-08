@@ -30,4 +30,11 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function conversations()
+    {
+        return $this->belongsToMany(
+            Conversation::class
+        )->withTimestamps();
+    }
 }

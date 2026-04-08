@@ -1,6 +1,6 @@
 <?php
 
-namespace App\http\Controllers\Api;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
@@ -9,45 +9,78 @@ use Illuminate\Http\Request;
 class AnnouncementController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display all announcements
      */
     public function index()
     {
-        return Announcement::all();
+        return response()->json(
+            Announcement::latest()->get()
+        );
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store new announcement
      */
     public function store(Request $request)
     {
-        $announcement = Announcement::create($request->all());
-        return response()->json($announcement, 201);
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+        ]);
+
+        $announcement = Announcement::create([
+            'title' => $validated['title'],
+            'content' => $validated['content'],
+            'created_by' => auth()->id(), // important
+        ]);
+
+        return response()->json(
+            $announcement,
+            201
+        );
     }
 
     /**
-     * Display the specified resource.
+     * Show single announcement
      */
     public function show(Announcement $announcement)
     {
-        return $announcement;
+        return response()->json($announcement);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update announcement
      */
-    public function update(Request $request, Announcement $announcement)
-    {
-        $announcement->update($request->all());
-        return response()->json($announcement, 200);
+    public function update(
+        Request $request,
+        Announcement $announcement
+    ) {
+
+        $validated = $request->validate([
+            'title' => 'sometimes|string|max:255',
+            'content' => 'sometimes|string',
+        ]);
+
+        $announcement->update($validated);
+
+        return response()->json(
+            $announcement,
+            200
+        );
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete announcement
      */
-    public function destroy(Announcement $announcement)
-    {
+    public function destroy(
+        Announcement $announcement
+    ) {
+
         $announcement->delete();
-        return response()->json(null, 204);
+
+        return response()->json(
+            null,
+            204
+        );
     }
 }
