@@ -1,36 +1,44 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ConversationController;
+use App\Http\Controllers\Api\DocumentController;
+use App\Http\Controllers\Api\MessageController;
+use App\Http\Controllers\Api\RoleController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\UserRoleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\AnnouncementController;
-use App\Http\Controllers\Api\DocumentController;
-use App\Http\Controllers\Api\RoleController;
 
-use App\Http\Controllers\Api\MessageController;
-use App\Http\Controllers\Api\ConversationController;
-
+Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware(['api', 'auth:sanctum'])->group(function (): void {
+    Route::get('me', [AuthController::class, 'me']);
+    Route::post('logout', [AuthController::class, 'logout']);
+
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
 
     Route::apiResource('users', UserController::class);
+    Route::get('users/{user}/roles', [UserRoleController::class, 'index']);
+    Route::put('users/{user}/roles', [UserRoleController::class, 'update']);
 });
 
 Route::middleware(['api', 'auth:sanctum'])->group(function (): void {
-    Route::apiResource('roles', \App\Http\Controllers\Api\RoleController::class);
+    Route::apiResource('roles', RoleController::class);
 });
 
 Route::middleware(['api', 'auth:sanctum'])->group(function (): void {
-    Route::apiResource('documents', \App\Http\Controllers\Api\DocumentController::class);
+    Route::apiResource('documents', DocumentController::class);
 });
 
-Route::post(
-    '/messages',
-    [MessageController::class, 'store']
-);
+Route::middleware('auth:sanctum')->group(function (): void {
+    Route::post(
+        '/messages',
+        [MessageController::class, 'store']
+    );
+});
 
 Route::middleware('auth:sanctum')->group(function () {
 

@@ -69,3 +69,43 @@ php artisan key:generate
 php artisan serve --no-reload --host=127.0.0.1 --port=8000
 ```
 
+## Usuarios de prueba (Postman)
+
+Puedes usar estos usuarios para probar autenticacion, roles y mensajeria:
+
+- Admin
+	- email: postman.admin@test.local
+	- password: Admin123!
+	- role: Admin
+
+- Employee
+	- email: postman.user@test.local
+	- password: User123!
+	- role: Employee
+
+Endpoint de login:
+
+```http
+POST /api/login
+```
+
+Body ejemplo:
+
+```json
+{
+	"email": "postman.admin@test.local",
+	"password": "Admin123!",
+	"device_name": "postman"
+}
+```
+
+Comandos para crear usuarios de prueba:
+
+```bash
+php artisan tinker --execute '$role = App\Models\Role::query()->firstOrCreate([''name'' => ''Admin'']); $user = App\Models\User::query()->updateOrCreate([''email'' => ''postman.admin@test.local''], [''name'' => ''Postman Admin'', ''password'' => bcrypt(''Admin123!'')]); $user->roles()->sync([$role->id]);'
+```
+
+```bash
+php artisan tinker --execute '$role = App\Models\Role::query()->firstOrCreate([''name'' => ''Employee'']); $user = App\Models\User::query()->updateOrCreate([''email'' => ''postman.user@test.local''], [''name'' => ''Postman User'', ''password'' => bcrypt(''User123!'')]); $user->roles()->sync([$role->id]);'
+```
+

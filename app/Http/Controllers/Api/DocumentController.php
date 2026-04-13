@@ -1,58 +1,50 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreRoleRequest;
-use App\Http\Requests\UpdateRoleRequest;
-use App\Http\Resources\RoleResource;
-use App\Models\Role;
+use App\Http\Requests\StoreDocumentRequest;
+use App\Http\Requests\UpdateDocumentRequest;
+use App\Models\Document;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-class RoleController extends Controller
+class DocumentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(): AnonymousResourceCollection
+    public function index(): JsonResponse
     {
-        return RoleResource::collection(Role::query()->latest()->get());
+        return response()->json([
+            'data' => Document::query()->latest()->get(),
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreRoleRequest $request): RoleResource
+    public function store(StoreDocumentRequest $request): JsonResponse
     {
-        $role = Role::create($request->validated());
+        $document = Document::query()->create($request->validated());
 
-        return new RoleResource($role);
+        return response()->json([
+            'data' => $document,
+        ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Role $role): RoleResource
+    public function show(Document $document): JsonResponse
     {
-        return new RoleResource($role);
+        return response()->json([
+            'data' => $document,
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateRoleRequest $request, Role $role): RoleResource
+    public function update(UpdateDocumentRequest $request, Document $document): JsonResponse
     {
-        $role->update($request->validated());
+        $document->update($request->validated());
 
-        return new RoleResource($role->refresh());
+        return response()->json([
+            'data' => $document->refresh(),
+        ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Role $role): JsonResponse
+    public function destroy(Document $document): JsonResponse
     {
-        $role->delete();
+        $document->delete();
 
         return response()->json(null, 204);
     }

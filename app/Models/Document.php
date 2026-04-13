@@ -2,13 +2,18 @@
 
 namespace App\Models;
 
-use Database\Factories\RoleFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-#[Fillable(['name'])]
-class Role extends Model
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+#[Fillable(['title', 'file_path', 'user_id', 'visibility'])]
+class Document extends Model
 {
-    /** @use HasFactory<RoleFactory> */
     use HasFactory;
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }
