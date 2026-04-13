@@ -2,17 +2,19 @@
 
 namespace App\Models;
 
-use Database\Factories\RoleFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-#[Fillable(['name'])]
+#[Fillable(['name', 'can_post_announcements'])]
 class Role extends Model
 {
-    /** @use HasFactory<RoleFactory> */
-    use HasFactory;
+    protected function casts(): array
+    {
+        return [
+            'can_post_announcements' => 'boolean',
+        ];
+    }
 
     public function users(): BelongsToMany
     {
