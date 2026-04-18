@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Conversation;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -48,6 +49,23 @@ class ConversationController extends Controller
         return response()->json(
             $conversation->load('users'),
             201
+        );
+    }
+
+    public function destroy(Conversation $conversation): JsonResponse
+    {
+        $this->ensureAdmin();
+
+        $conversation->delete();
+
+        return response()->json(null, 204);
+    }
+
+    private function ensureAdmin(): void
+    {
+        abort_unless(
+            auth()->user()?->roles()->where('name', 'admin')->exists(),
+            403
         );
     }
 }

@@ -34,10 +34,27 @@ Route::middleware(['api', 'auth:sanctum'])->group(function (): void {
 });
 
 Route::middleware('auth:sanctum')->group(function (): void {
+    Route::get(
+        '/conversations/{conversation}/messages',
+        [MessageController::class, 'index']
+    );
+
     Route::post(
         '/messages',
         [MessageController::class, 'store']
     );
+
+    Route::middleware('admin')->group(function (): void {
+        Route::delete(
+            '/messages/{message}',
+            [MessageController::class, 'destroy']
+        );
+
+        Route::delete(
+            '/conversations/{conversation}',
+            [ConversationController::class, 'destroy']
+        );
+    });
 });
 
 Route::middleware('auth:sanctum')->group(function () {
