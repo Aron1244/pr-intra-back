@@ -31,6 +31,12 @@ class UpdateAnnouncementRequest extends FormRequest
             'title' => ['sometimes', 'string', 'max:255'],
             'content' => ['sometimes', 'string'],
             'department_id' => ['sometimes', 'integer', 'exists:departments,id'],
+            'is_visible' => ['sometimes', 'boolean'],
+            'publish_all' => ['sometimes', 'boolean'],
+            'attachments' => ['sometimes', 'array'],
+            'attachments.*' => ['file', 'max:20480'],
+            'remove_attachment_ids' => ['sometimes', 'array'],
+            'remove_attachment_ids.*' => ['integer', 'exists:announcement_attachments,id'],
         ];
     }
 }

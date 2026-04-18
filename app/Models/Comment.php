@@ -5,9 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-#[Fillable(['user_id', 'content'])]
+#[Fillable(['user_id', 'announcement_id', 'content'])]
 class Comment extends Model
 {
     public function user(): BelongsTo
@@ -15,8 +14,8 @@ class Comment extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function commentable(): MorphTo
+    public function announcement(): BelongsTo
     {
-        return $this->morphTo();
+        return $this->belongsTo(Announcement::class);
     }
 }

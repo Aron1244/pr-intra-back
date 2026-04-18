@@ -45,4 +45,19 @@ class MessageSent implements ShouldBroadcast
     {
         return 'message.sent';
     }
+
+    /**
+     * Broadcast payload consumed by frontend clients.
+     */
+    public function broadcastWith(): array
+    {
+        $message = $this->message->loadMissing([
+            'sender:id,name',
+            'document:id,title,file_path,original_name,mime_type,size_bytes,visibility,department_folder_id,user_id',
+        ]);
+
+        return [
+            'message' => $message,
+        ];
+    }
 }

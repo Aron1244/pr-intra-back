@@ -12,7 +12,9 @@ class Message extends Model
     protected $fillable = [
         'conversation_id',
         'sender_id',
-        'content'
+        'content',
+        'document_id',
+        'type',
     ];
 
     /**
@@ -34,5 +36,10 @@ class Message extends Model
             User::class,
             'sender_id'
         );
+    }
+
+    public function document()
+    {
+        return $this->belongsTo(Document::class);
     }
 }

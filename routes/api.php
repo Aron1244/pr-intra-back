@@ -4,6 +4,8 @@ use App\Http\Controllers\Api\AnnouncementController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\ConversationController;
+use App\Http\Controllers\Api\DepartmentController;
+use App\Http\Controllers\Api\DepartmentFolderController;
 use App\Http\Controllers\Api\DocumentController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\RoleController;
@@ -32,12 +34,36 @@ Route::middleware(['api', 'auth:sanctum'])->group(function (): void {
 });
 
 Route::middleware(['api', 'auth:sanctum'])->group(function (): void {
+    Route::get('departments', [DepartmentController::class, 'index']);
+
+    Route::get('documents/{document}/download', [DocumentController::class, 'download']);
     Route::apiResource('documents', DocumentController::class);
+
+    Route::get(
+        'departments/{department}/folders',
+        [DepartmentFolderController::class, 'index']
+    );
+
+    Route::post(
+        'departments/{department}/folders',
+        [DepartmentFolderController::class, 'store']
+    );
+
+    Route::post(
+        'departments/{department}/folders/{folder}/documents',
+        [DocumentController::class, 'storeDepartmentDocument']
+    );
 });
 
 Route::middleware(['api', 'auth:sanctum'])->group(function (): void {
     Route::apiResource('announcements', AnnouncementController::class);
+    Route::get('announcements/{announcement}/comments', [CommentController::class, 'indexByAnnouncement']);
     Route::post('announcements/{announcement}/comments', [CommentController::class, 'store']);
+    Route::delete('comments/{comment}', [CommentController::class, 'destroy']);
+    Route::get(
+        'announcements/{announcement}/attachments/{attachment}/download',
+        [AnnouncementController::class, 'downloadAttachment']
+    );
 });
 
 Route::middleware('auth:sanctum')->group(function (): void {

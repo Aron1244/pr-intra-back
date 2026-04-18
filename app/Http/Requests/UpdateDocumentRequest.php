@@ -24,8 +24,8 @@ class UpdateDocumentRequest extends FormRequest
     {
         return [
             'title' => ['sometimes', 'string', 'max:255'],
-            'file_path' => ['sometimes', 'string', 'max:2048'],
-            'user_id' => ['sometimes', 'integer', 'exists:users,id'],
+            'file' => ['sometimes', 'file', 'max:20480'],
+            'department_folder_id' => ['sometimes', 'nullable', 'integer', 'exists:department_folders,id'],
             'visibility' => ['sometimes', 'in:public,department,private'],
         ];
     }

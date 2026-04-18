@@ -18,4 +18,9 @@ class Department extends Model
     {
         return $this->hasMany(Announcement::class);
     }
+
+    public function folders(): HasMany
+    {
+        return $this->hasMany(DepartmentFolder::class);
+    }
 }

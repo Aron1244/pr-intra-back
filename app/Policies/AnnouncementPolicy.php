@@ -20,8 +20,12 @@ class AnnouncementPolicy
      */
     public function view(User $user, Announcement $announcement): bool
     {
-        return $user->canPostAnnouncements()
-            || $user->department_id === $announcement->department_id;
+        if ($user->canManageAnnouncements()) {
+            return true;
+        }
+
+        return $announcement->is_visible
+            && $user->department_id === $announcement->department_id;
     }
 
     /**
@@ -29,7 +33,7 @@ class AnnouncementPolicy
      */
     public function create(User $user): bool
     {
-        return $user->canPostAnnouncements();
+        return $user->canManageAnnouncements();
     }
 
     /**
@@ -37,8 +41,15 @@ class AnnouncementPolicy
      */
     public function update(User $user, Announcement $announcement): bool
     {
-        return $user->canPostAnnouncements()
-            || $announcement->created_by === $user->id;
+        if ($user->canManageAnnouncements()) {
+            if ($user->roles()->where('name', 'admin')->exists()) {
+                return true;
+            }
+
+            return $user->department_id === $announcement->department_id;
+        }
+
+        return false;
     }
 
     /**
@@ -46,13 +57,13 @@ class AnnouncementPolicy
      */
     public function delete(User $user, Announcement $announcement): bool
     {
-        return $user->canPostAnnouncements()
-            || $announcement->created_by === $user->id;
+        return $this->update($user, $announcement);
     }
 
     public function comment(User $user, Announcement $announcement): bool
     {
-        return $user->department_id !== null
+        return $announcement->is_visible
+            && $user->department_id !== null
             && $user->department_id === $announcement->department_id;
     }
 

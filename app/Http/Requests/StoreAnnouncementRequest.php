@@ -26,7 +26,11 @@ class StoreAnnouncementRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
-            'department_id' => ['required', 'integer', 'exists:departments,id'],
+            'department_id' => ['required_without:publish_all', 'nullable', 'integer', 'exists:departments,id'],
+            'is_visible' => ['sometimes', 'boolean'],
+            'publish_all' => ['sometimes', 'boolean'],
+            'attachments' => ['sometimes', 'array'],
+            'attachments.*' => ['file', 'max:20480'],
         ];
     }
 }

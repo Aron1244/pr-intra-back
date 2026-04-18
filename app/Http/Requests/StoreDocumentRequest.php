@@ -23,10 +23,10 @@ class StoreDocumentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255'],
-            'file_path' => ['required', 'string', 'max:2048'],
-            'user_id' => ['required', 'integer', 'exists:users,id'],
-            'visibility' => ['required', 'in:public,department,private'],
+            'title' => ['nullable', 'string', 'max:255'],
+            'file' => ['required', 'file', 'max:20480'],
+            'department_folder_id' => ['nullable', 'integer', 'exists:department_folders,id'],
+            'visibility' => ['nullable', 'in:public,department,private'],
         ];
     }
 }
