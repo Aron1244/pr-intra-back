@@ -62,6 +62,11 @@ php artisan install:broadcasting
 ```bash
 php artisan key:generate
 ```
+5. Crear el enlace al almacenamiento público
+
+```bash
+php artisan storage:link
+```
 
 ## Ejecutar en Windows
 
