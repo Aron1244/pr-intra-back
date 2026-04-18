@@ -16,6 +16,7 @@ return new class extends Migration
             $table->id();
 
             $table->string('name')->unique();
+            $table->boolean('can_post_announcements')->default(false);
 
             $table->timestamps();
 

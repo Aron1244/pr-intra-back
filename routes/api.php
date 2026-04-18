@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\AnnouncementController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\ConversationController;
 use App\Http\Controllers\Api\DocumentController;
 use App\Http\Controllers\Api\MessageController;
@@ -31,6 +33,11 @@ Route::middleware(['api', 'auth:sanctum'])->group(function (): void {
 
 Route::middleware(['api', 'auth:sanctum'])->group(function (): void {
     Route::apiResource('documents', DocumentController::class);
+});
+
+Route::middleware(['api', 'auth:sanctum'])->group(function (): void {
+    Route::apiResource('announcements', AnnouncementController::class);
+    Route::post('announcements/{announcement}/comments', [CommentController::class, 'store']);
 });
 
 Route::middleware('auth:sanctum')->group(function (): void {

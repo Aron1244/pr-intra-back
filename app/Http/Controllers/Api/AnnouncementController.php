@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreAnnouncementRequest;
+use App\Http\Requests\UpdateAnnouncementRequest;
 use App\Models\Announcement;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AnnouncementController extends Controller
@@ -11,76 +14,64 @@ class AnnouncementController extends Controller
     /**
      * Display all announcements
      */
-    public function index()
+    public function index(Request $request): JsonResponse
     {
+        $user = $request->user();
+
         return response()->json(
-            Announcement::latest()->get()
+            Announcement::query()
+                ->with(['creator', 'department'])
+                ->when(
+                    ! $user->canPostAnnouncements(),
+                    fn ($query) => $query->where('department_id', $user->department_id)
+                )
+                ->latest()
+                ->get()
         );
     }
 
     /**
      * Store new announcement
      */
-    public function store(Request $request)
+    public function store(StoreAnnouncementRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
+        $announcement = Announcement::query()->create([
+            ...$request->validated(),
+            'created_by' => $request->user()->id,
         ]);
 
-        $announcement = Announcement::create([
-            'title' => $validated['title'],
-            'content' => $validated['content'],
-            'created_by' => auth()->id(), // important
-        ]);
-
-        return response()->json(
-            $announcement,
-            201
-        );
+        return response()->json($announcement->load(['creator', 'department']), 201);
     }
 
     /**
      * Show single announcement
      */
-    public function show(Announcement $announcement)
+    public function show(Announcement $announcement): JsonResponse
     {
-        return response()->json($announcement);
+        $this->authorize('view', $announcement);
+
+        return response()->json($announcement->load(['creator', 'department', 'comments.user']));
     }
 
     /**
      * Update announcement
      */
-    public function update(
-        Request $request,
-        Announcement $announcement
-    ) {
+    public function update(UpdateAnnouncementRequest $request, Announcement $announcement): JsonResponse
+    {
+        $announcement->update($request->validated());
 
-        $validated = $request->validate([
-            'title' => 'sometimes|string|max:255',
-            'content' => 'sometimes|string',
-        ]);
-
-        $announcement->update($validated);
-
-        return response()->json(
-            $announcement,
-            200
-        );
+        return response()->json($announcement->refresh()->load(['creator', 'department']), 200);
     }
 
     /**
      * Delete announcement
      */
-    public function destroy(
-        Announcement $announcement
-    ) {
+    public function destroy(Announcement $announcement): JsonResponse
+    {
+        $this->authorize('delete', $announcement);
 
         $announcement->delete();
 
-        return response()->json(
-            null,
-            204
-        );
+        return response()->json(null, 204);
     }
 }

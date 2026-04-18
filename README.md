@@ -102,10 +102,13 @@ Body ejemplo:
 Comandos para crear usuarios de prueba:
 
 ```bash
-php artisan tinker --execute '$role = App\Models\Role::query()->firstOrCreate([''name'' => ''Admin'']); $user = App\Models\User::query()->updateOrCreate([''email'' => ''postman.admin@test.local''], [''name'' => ''Postman Admin'', ''password'' => bcrypt(''Admin123!'')]); $user->roles()->sync([$role->id]);'
+php artisan tinker --execute '$role = App\Models\Role::query()->firstOrCreate(["name" => "Admin"]); $user = App\Models\User::query()->updateOrCreate(["email" => "postman.admin@test.local"], ["name" => "Postman Admin", "password" => "Admin123!"]); $user->roles()->sync([$role->id]);'
 ```
 
 ```bash
-php artisan tinker --execute '$role = App\Models\Role::query()->firstOrCreate([''name'' => ''Employee'']); $user = App\Models\User::query()->updateOrCreate([''email'' => ''postman.user@test.local''], [''name'' => ''Postman User'', ''password'' => bcrypt(''User123!'')]); $user->roles()->sync([$role->id]);'
+php artisan tinker --execute '$role = App\Models\Role::query()->firstOrCreate(["name" => "Employee"]); $user = App\Models\User::query()->updateOrCreate(["email" => "postman.user@test.local"], ["name" => "Postman User", "password" => "User123!"]); $user->roles()->sync([$role->id]);'
 ```
 
+```bash
+php artisan tinker --execute '$department = App\Models\Department::query()->firstOrCreate(["name" => "IT"], ["description" => "IT section"]); $role = App\Models\Role::query()->firstOrCreate(["name" => "CTO"]); $user = App\Models\User::query()->updateOrCreate(["email" => "cto@test.local"], ["name" => "CTO User", "password" => "Admin123!", "department_id" => $department->id]); $user->roles()->sync([$role->id]);'
+```

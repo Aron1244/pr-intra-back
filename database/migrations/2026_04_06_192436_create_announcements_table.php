@@ -19,7 +19,9 @@ return new class extends Migration
 
             $table->text('content');
 
-            $table->morphs('commentable');
+            $table->foreignId('department_id')
+                ->constrained('departments')
+                ->cascadeOnDelete();
 
             $table->foreignId('created_by')
                 ->constrained('users')
