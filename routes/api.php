@@ -31,10 +31,11 @@ Route::middleware(['api', 'auth:sanctum'])->group(function (): void {
 
 Route::middleware(['api', 'auth:sanctum'])->group(function (): void {
     Route::apiResource('roles', RoleController::class);
+    Route::get('departments/{department}/roles', [RoleController::class, 'byDepartment']);
 });
 
 Route::middleware(['api', 'auth:sanctum'])->group(function (): void {
-    Route::get('departments', [DepartmentController::class, 'index']);
+    Route::apiResource('departments', DepartmentController::class);
 
     Route::get('documents/{document}/download', [DocumentController::class, 'download']);
     Route::apiResource('documents', DocumentController::class);

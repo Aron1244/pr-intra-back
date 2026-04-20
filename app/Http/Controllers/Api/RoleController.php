@@ -5,9 +5,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
 use App\Http\Resources\RoleResource;
+use App\Models\Department;
 use App\Models\Role;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Schema;
 
 class RoleController extends Controller
 {
@@ -16,7 +18,33 @@ class RoleController extends Controller
      */
     public function index(): AnonymousResourceCollection
     {
-        return RoleResource::collection(Role::query()->latest()->get());
+        $query = Role::query()->orderBy('name');
+        
+        // Load department relation if the column exists
+        if (Schema::hasColumn('roles', 'department_id')) {
+            $query->with('department')->orderBy('department_id');
+        }
+        
+        return RoleResource::collection($query->get());
+    }
+
+    /**
+     * Get roles for a specific department
+     */
+    public function byDepartment(Department $department): AnonymousResourceCollection
+    {
+        // Check if department_id column exists
+        if (!Schema::hasColumn('roles', 'department_id')) {
+            // Return empty collection if migration hasn't run
+            return RoleResource::collection(collect());
+        }
+
+        return RoleResource::collection(
+            Role::query()
+                ->where('department_id', $department->id)
+                ->orderBy('name')
+                ->get()
+        );
     }
 
     /**
@@ -26,6 +54,10 @@ class RoleController extends Controller
     {
         $role = Role::create($request->validated());
 
+        if (Schema::hasColumn('roles', 'department_id')) {
+            $role->load('department');
+        }
+
         return new RoleResource($role);
     }
 
@@ -34,6 +66,10 @@ class RoleController extends Controller
      */
     public function show(Role $role): RoleResource
     {
+        if (Schema::hasColumn('roles', 'department_id')) {
+            $role->load('department');
+        }
+
         return new RoleResource($role);
     }
 
@@ -43,6 +79,10 @@ class RoleController extends Controller
     public function update(UpdateRoleRequest $request, Role $role): RoleResource
     {
         $role->update($request->validated());
+
+        if (Schema::hasColumn('roles', 'department_id')) {
+            $role->load('department')->refresh();
+        }
 
         return new RoleResource($role->refresh());
     }

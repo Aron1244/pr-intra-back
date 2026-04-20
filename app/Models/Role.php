@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-#[Fillable(['name', 'can_post_announcements'])]
+#[Fillable(['name', 'can_post_announcements', 'department_id'])]
 class Role extends Model
 {
     protected function casts(): array
@@ -14,6 +15,11 @@ class Role extends Model
         return [
             'can_post_announcements' => 'boolean',
         ];
+    }
+
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(Department::class);
     }
 
     public function users(): BelongsToMany

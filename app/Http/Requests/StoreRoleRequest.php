@@ -19,9 +19,16 @@ class StoreRoleRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'name' => ['required', 'string', 'max:255', 'unique:roles,name'],
             'can_post_announcements' => ['sometimes', 'boolean'],
         ];
+
+        // Add department_id validation if migration has been applied
+        if (\Illuminate\Support\Facades\Schema::hasColumn('roles', 'department_id')) {
+            $rules['department_id'] = ['required', 'integer', 'exists:departments,id'];
+        }
+
+        return $rules;
     }
 }

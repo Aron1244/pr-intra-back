@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Announcement;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -13,11 +12,8 @@ class StoreCommentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        /** @var Announcement|null $announcement */
-        $announcement = $this->route('announcement');
-
-        return $announcement !== null
-            && ($this->user()?->can('comment', $announcement) ?? false);
+        // Allow authenticated users to comment
+        return $this->user() !== null;
     }
 
     /**
@@ -28,7 +24,7 @@ class StoreCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'content' => ['required', 'string'],
+            'content' => ['required', 'string', 'max:1000'],
         ];
     }
 }

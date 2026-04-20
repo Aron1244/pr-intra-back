@@ -20,9 +20,16 @@ class UpdateRoleRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'name' => ['sometimes', 'string', 'max:255', Rule::unique('roles', 'name')->ignore($this->role)],
             'can_post_announcements' => ['sometimes', 'boolean'],
         ];
+
+        // Add department_id validation if migration has been applied (but don't allow updating it)
+        if (\Illuminate\Support\Facades\Schema::hasColumn('roles', 'department_id')) {
+            // Note: department_id should not be updateable, only createable
+        }
+
+        return $rules;
     }
 }

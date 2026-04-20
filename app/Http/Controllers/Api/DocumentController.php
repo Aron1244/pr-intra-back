@@ -41,6 +41,9 @@ class DocumentController extends Controller
                             ->whereHas('folder', function ($folderQuery) use ($user): void {
                                 $folderQuery->where('department_id', $user->department_id);
                             });
+                    })
+                    ->orWhereHas('messages.conversation.users', function ($conversationUserQuery) use ($user): void {
+                        $conversationUserQuery->whereKey($user->id);
                     });
             });
         }
@@ -249,6 +252,17 @@ class DocumentController extends Controller
             $document->folder &&
             (int) $document->folder->department_id === (int) $user->department_id
         ) {
+            return;
+        }
+
+        $isSharedInUserConversation = $document
+            ->messages()
+            ->whereHas('conversation.users', function ($conversationUserQuery) use ($user): void {
+                $conversationUserQuery->whereKey($user->id);
+            })
+            ->exists();
+
+        if ($isSharedInUserConversation) {
             return;
         }
 
