@@ -1,5 +1,7 @@
 # PR Intra Back
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Aron1244/pr-intra-back)
+
 Backend del proyecto construido con Laravel.
 
 ## Arquitectura del proyecto
